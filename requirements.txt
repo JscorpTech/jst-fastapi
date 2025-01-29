@@ -6,5 +6,6 @@ uvicorn
 asyncpg
 tomli_w
 passlib
-python-dotenv
+environs
 bcrypt
+requests

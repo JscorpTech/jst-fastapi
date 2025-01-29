@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Body, Depends, Request
 from fastapi_core.response import ResponseSchema
 from ..schemas.auth import ConfirmSchema, LoginSchema, RegisterSchema, TokenSchema
-from app.services import UserService
+from app.services import UserService, OtpService
 
 router = APIRouter(
     prefix="/auth",
@@ -12,9 +12,12 @@ router = APIRouter(
 
 @router.post("/register")
 async def register(
-    user: Annotated[RegisterSchema, Body()], service: UserService = Depends(UserService)
+    user: Annotated[RegisterSchema, Body()],
+    service: UserService = Depends(UserService),
+    otp_service: OtpService = Depends(OtpService),
 ) -> ResponseSchema[RegisterSchema]:
     await service.save_user_redis(user)
+    await otp_service.send_otp(user.phone)
     return ResponseSchema(data=user)
 
 
