@@ -1,0 +1,10 @@
+fastapi
+tortoise-orm
+redis
+aerich
+uvicorn
+asyncpg
+tomli_w
+passlib
+python-dotenv
+bcrypt
