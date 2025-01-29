@@ -1,5 +1,5 @@
 from pydantic import BaseModel as PyBaseModel
-from app.exceptions import APIException
+from fastapi_core.exceptions import APIException
 
 
 __all__ = [

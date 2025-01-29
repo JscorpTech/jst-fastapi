@@ -4,7 +4,7 @@ from app.api.v1.routes import root
 from fastapi_core.asgi import application
 from fastapi import HTTPException, responses
 from fastapi.exceptions import RequestValidationError
-from app.exceptions import APIException
+from fastapi_core.exceptions import APIException
 from fastapi_core.response import ResponseSchema
 
 app = application()

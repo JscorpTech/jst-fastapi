@@ -2,7 +2,7 @@ from random import choices
 import string
 from fastapi_core.conf import settings
 from app.services import EskizService
-from app.exceptions import APIException
+from fastapi_core.exceptions import APIException
 from app.db.models import OtpModel
 
 
