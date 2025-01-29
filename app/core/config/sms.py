@@ -1,6 +1,6 @@
 from app.core.env import env
 
-OTP_MESSAGE: str = env.str("OTP_MESSAGE", "Your OTP is {otp}")
+OTP_MESSAGE: str = env.str("OTP_MESSAGE", "Your OTP is %(otp)s")
 SMS_API_URL: str = env.str("SMS_API_URL", "https://notify.eskiz.uz/api")
 SMS_LOGIN: str = env.str("SMS_LOGIN", "admin@gmail.com")
 SMS_PASSWORD: str = env.str("SMS_PASSWORD", "password")

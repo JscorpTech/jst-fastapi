@@ -9,3 +9,5 @@ passlib
 environs
 bcrypt
 requests
+pyjwt
+asgiref
