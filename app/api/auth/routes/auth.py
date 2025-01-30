@@ -1,8 +1,9 @@
 from typing import Annotated
-from fastapi import APIRouter, Body, Depends, Request
-from fastapi_core.response import ResponseSchema
-from ..schemas.auth import ConfirmSchema, LoginSchema, RegisterSchema, TokenSchema
-from app.services import UserService, OtpService
+from fastapi import APIRouter, Body, Depends
+from fastapi_core.response import _R
+from ..schemas import auth as _schema
+from app import services as _services
+from app.schemas import UserSchema
 from ..services.auth import create_token
 
 
@@ -14,29 +15,35 @@ router = APIRouter(
 
 @router.post("/register")
 async def register(
-    user: Annotated[RegisterSchema, Body()],
-    service: UserService = Depends(UserService),
-    otp_service: OtpService = Depends(OtpService),
-) -> ResponseSchema[RegisterSchema]:
+    user: Annotated[_schema.RegisterSchema, Body()],
+    service: Annotated[_services.AuthService, Depends()],
+    otp_service: Annotated[_services.OtpService, Depends()],
+) -> _R[_schema.RegisterSchema]:
     await service.save_user_redis(user)
     otp_service.send_otp(user.phone)
-    return ResponseSchema(data=user)
+    return _R(data=user)
 
 
 @router.post("/confirm")
 async def confirm(
-    confirm: ConfirmSchema, service: UserService = Depends(UserService),
-    otp_service: OtpService = Depends(OtpService),
-) -> ResponseSchema[TokenSchema]:
+    confirm: _schema.ConfirmSchema,
+    service: Annotated[_services.AuthService, Depends()],
+    otp_service: Annotated[_services.OtpService, Depends()],
+) -> _R[_schema.TokenSchema]:
     otp_service.verify_otp(confirm.phone, confirm.code)
     user = await service.create_user_redis(confirm.phone)
-    return ResponseSchema(status=True, data=TokenSchema(**await create_token(user)))
+    return _R(status=True, data=_schema.TokenSchema(**await create_token(user)))
 
 
 @router.post("/login")
 async def login(
-    user: Annotated[LoginSchema, Body()], request: Request
-) -> ResponseSchema[TokenSchema]:
-    return ResponseSchema(
-        status=True, data=TokenSchema(access_token="11212", refresh_token="11212")
-    )
+    user: Annotated[_schema.LoginSchema, Body()],
+    service: Annotated[_services.AuthService, Depends()],
+) -> _R[_schema.TokenSchema]:
+    user = await service.validate_user(user.phone, user.password)
+    return _R(status=True, data=_schema.TokenSchema(**await create_token(user)))
+
+
+@router.get("/me")
+async def me(user: int = Depends(_services.get_user)) -> _R[UserSchema]:
+    return _R(data=UserSchema.model_validate(user))

@@ -2,6 +2,7 @@ import jwt
 import datetime
 from fastapi_core.conf import settings
 from app.db.models import UserModel
+from fastapi import HTTPException
 
 
 async def create_token(user: UserModel) -> dict:
@@ -26,7 +27,7 @@ async def jwt_encode(
         )
     to_encode = {
         "exp": datetime.datetime.now(datetime.UTC) + exp,
-        "sub": sub,
+        "sub": str(sub),
         "token_type": token_type,
         **kwargs,
     }
@@ -38,4 +39,14 @@ async def jwt_encode(
 
 
 async def jwt_decode(token: str) -> dict:
-    pass
+    try:
+        return jwt.decode(
+            token,
+            settings.JWT_CONFIG["SECRET"],
+            algorithms=[settings.JWT_CONFIG["ALGORITHM"]],
+            options={"verify_exp": True},
+        )
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Signature has expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")

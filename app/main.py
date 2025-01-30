@@ -1,6 +1,6 @@
 from app import load  # noqa
 from app.api.auth.routes import auth
-from app.api.v1.routes import root
+from app.api.v1.routes import news
 from fastapi_core.asgi import application
 from fastapi import HTTPException, responses
 from fastapi_core.exceptions import APIException
@@ -9,7 +9,7 @@ from pyinstrument import Profiler
 
 app = application()
 
-app.include_router(root.router)
+app.include_router(news.router, prefix="/v1/news")
 app.include_router(auth.router)
 
 
@@ -28,9 +28,7 @@ async def profiler_middleware(request, call_next):
 def api_exception_handler(request, exc):
     return responses.JSONResponse(
         status_code=exc.status_code,
-        content=ResponseSchema(
-            status=False, message=exc.detail, data=exc.data
-        ).model_dump(),
+        content=ResponseSchema(status=False, message=exc.detail, data=exc.data).model_dump(),
     )
 
 

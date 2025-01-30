@@ -1,7 +1,8 @@
 from fastapi_core import setup
 import os
+
 os.environ.setdefault("SETTINGS_MODULE", "app.core.settings.local")
-setup() # noqa
+setup()  # noqa
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config

@@ -13,6 +13,7 @@ def setup() -> FastAPI:
     from fastapi_core.conf import settings
     from app.db.models import Base
     from app.db.database import engine
+
     Base.metadata.create_all(bind=engine)
 
     app = FastAPI(title=settings.PROJECT_NAME, version=settings.VERSION)

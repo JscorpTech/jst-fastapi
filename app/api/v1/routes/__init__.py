@@ -1,5 +1,5 @@
-from . import root
+from . import news
 
 __all__ = [
-    "root",
+    "news",
 ]

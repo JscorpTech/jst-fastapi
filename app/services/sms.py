@@ -84,9 +84,7 @@ class EskizService(SmsService):
             "api_path": self.methods["auth_user"],
         }
 
-        return self.request(
-            data["api_path"], method=data["method"], headers=data["headers"]
-        )
+        return self.request(data["api_path"], method=data["method"], headers=data["headers"])
 
     def add_sms_contact(self, first_name, phone_number, group):
         token = self.auth()["data"]["token"]

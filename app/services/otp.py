@@ -1,9 +1,9 @@
 from random import choices
 import string
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from app.db.models import OtpModel
-from app.db.database import get_db
+from app.db.database import _DB
 from app.services import EskizService
 from fastapi_core.conf import settings
 
@@ -13,16 +13,12 @@ class OtpService:
     db: Session
     phone: str | None = None
 
-    def __init__(self, db: Session = Depends(get_db)):
+    def __init__(self, db: _DB):
         self.db = db
 
     def _generate_otp(self) -> str:
         """Generate OTP"""
-        if (
-            query := self.db.query(OtpModel)
-            .filter(OtpModel.phone == self.phone)
-            .first()
-        ):
+        if query := self.db.query(OtpModel).filter(OtpModel.phone == self.phone).first():
             return query.otp
         if settings.OTP_DEBUG:
             return "1" * int(settings.OTP_COUNT)
@@ -50,11 +46,7 @@ class OtpService:
 
     def verify_otp(self, phone: str, otp: str) -> bool:
         """Verify OTP"""
-        otp_entry = (
-            self.db.query(OtpModel)
-            .filter(OtpModel.phone == phone, OtpModel.otp == otp)
-            .first()
-        )
+        otp_entry = self.db.query(OtpModel).filter(OtpModel.phone == phone, OtpModel.otp == otp).first()
 
         if not otp_entry:
             raise HTTPException(status_code=400, detail="Invalid OTP")

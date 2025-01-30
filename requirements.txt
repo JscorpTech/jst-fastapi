@@ -12,3 +12,6 @@ psycopg2-binary
 sqlalchemy
 alembic
 pyinstrument
+python-multipart
+pytest
+httpx

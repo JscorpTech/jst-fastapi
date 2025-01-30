@@ -1,1 +1,1 @@
-from .root import *  # noqa
+from .news import *  # noqa
