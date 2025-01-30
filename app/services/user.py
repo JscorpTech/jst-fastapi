@@ -3,11 +3,16 @@ from app.db.models import UserModel
 from fastapi_core.services import RedisService
 import json
 from app.api.auth.schemas.auth import RegisterSchema
+from sqlalchemy.orm import Session
+from app.db.database import get_db
+from fastapi import Depends
 
 
 class UserService:
-    def __init__(self):
-        pass
+    db: Session
+
+    def __init__(self, db: Session = Depends(get_db)) -> None:
+        self.db = db
 
     async def save_user_redis(self, user: RegisterSchema):
         return await RedisService.set_key(
@@ -21,10 +26,13 @@ class UserService:
         user: RegisterSchema = json.loads(user)
         return await self.create_user(**user)
 
-    async def create_user(self, phone: str, password: str, *args, **kwargs):
-        return await UserModel.create(
-            phone=phone, password=await self.make_hash(password), **kwargs
-        )
+    async def create_user(
+        self, phone: str, password: str, *args, **kwargs
+    ) -> UserModel:
+        user = UserModel(phone=phone, password=await self.make_hash(password), **kwargs)
+        self.db.add(user)
+        self.db.commit()
+        return user
 
     async def make_hash(self, password: str) -> str:
         return bcrypt.hash(password)

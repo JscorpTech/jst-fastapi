@@ -8,9 +8,7 @@ done
 
 # Apply database migrations
 echo "Apply database migrations"
-aerich init-db
-aerich migrate
-aerich upgrade
+alembic upgrade head
 
 # Start FastAPI
 echo "Starting FastAPI"

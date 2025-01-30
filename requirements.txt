@@ -1,9 +1,6 @@
 fastapi
-tortoise-orm
 redis
-aerich
 uvicorn
-asyncpg
 tomli_w
 passlib
 environs
@@ -11,3 +8,7 @@ bcrypt
 requests
 pyjwt
 asgiref
+psycopg2-binary
+sqlalchemy
+alembic
+pyinstrument

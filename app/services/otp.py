@@ -1,43 +1,64 @@
 from random import choices
 import string
-from fastapi_core.conf import settings
-from app.services import EskizService
-from fastapi_core.exceptions import APIException
+from fastapi import Depends, HTTPException
+from sqlalchemy.orm import Session
 from app.db.models import OtpModel
+from app.db.database import get_db
+from app.services import EskizService
+from fastapi_core.conf import settings
 
 
 class OtpService:
     otp: int | None = None
+    db: Session
+    phone: str | None = None
 
-    def __init__(self):
-        pass
+    def __init__(self, db: Session = Depends(get_db)):
+        self.db = db
 
-    async def _generate_otp(self) -> str:
+    def _generate_otp(self) -> str:
         """Generate OTP"""
+        if (
+            query := self.db.query(OtpModel)
+            .filter(OtpModel.phone == self.phone)
+            .first()
+        ):
+            return query.otp
         if settings.OTP_DEBUG:
             return "1" * int(settings.OTP_COUNT)
         return "".join(choices(string.digits, k=settings.OTP_COUNT))
 
-    async def _generate_message(self) -> str:
+    def _generate_message(self) -> str:
         """Generate OTP message"""
-        self.otp: str = await self._generate_otp()
+        self.otp: str = self._generate_otp()
         return settings.OTP_MESSAGE % {"otp": self.otp}
 
-    async def send_otp(self, phone: str):
+    def send_otp(self, phone: str):
         """Send OTP"""
         try:
-            message = await self._generate_message()
-            await OtpModel.create(phone=phone, otp=self.otp)
+            self.phone = phone
+            message = self._generate_message()
+            otp = OtpModel(phone=phone, otp=self.otp)
+            self.db.add(otp)
+            self.db.commit()  # Commit is sync, no need for await here
             if settings.OTP_CONSOLE:
-                return print(message)
-            await EskizService().send_sms(phone, message)
+                print(message)
+            else:
+                EskizService().send_sms(phone, message)  # Make sure this method is sync
         except Exception as e:
-            raise APIException(status_code=400, detail=f"Failed to send OTP: {e}")
+            raise HTTPException(status_code=400, detail=f"Failed to send OTP: {e}")
 
-    async def verify_otp(self, phone: str, otp: str) -> bool:
+    def verify_otp(self, phone: str, otp: str) -> bool:
         """Verify OTP"""
-        otp_queryset = OtpModel.filter(phone=phone, otp=otp)
-        if not await otp_queryset.exists():
-            raise APIException(status_code=400, detail="Invalid OTP")
-        await otp_queryset.delete()
+        otp_entry = (
+            self.db.query(OtpModel)
+            .filter(OtpModel.phone == phone, OtpModel.otp == otp)
+            .first()
+        )
+
+        if not otp_entry:
+            raise HTTPException(status_code=400, detail="Invalid OTP")
+
+        self.db.delete(otp_entry)
+        self.db.commit()
         return True

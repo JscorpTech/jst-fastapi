@@ -1,15 +1,14 @@
-from tortoise import Model as TortoiseModel
-from tortoise import fields
+from sqlalchemy import Column, DateTime, Integer
+from app.db.database import Base
+from sqlalchemy.sql import func
 
 
-class Model(TortoiseModel):
-    id = fields.IntField(pk=True)
-    created_at = fields.DatetimeField(auto_now_add=True)
-    updated_at = fields.DatetimeField(auto_now=True)
+class Model(Base):
+    __abstract__: bool = True
 
-    class Meta:
-        abstract = True
-        ordering = ["-id"]
+    id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     def __str__(self) -> str:
         return "Object with id: {}".format(self.id)

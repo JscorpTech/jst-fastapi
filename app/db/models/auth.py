@@ -1,9 +1,9 @@
-from fastapi_core.db import Model, fields
+from fastapi_core.db import Model
+from sqlalchemy import Column, String, Integer
 
 
 class OtpModel(Model):
-    phone = fields.CharField(max_length=255)
-    otp = fields.IntField(max_length=255)
+    __tablename__ = "otps"
 
-    class Meta:
-        table = "otps"
+    phone = Column(String(100))
+    otp = Column(Integer)
