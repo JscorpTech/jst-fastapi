@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from app.schemas.translation import TranslationSchema
 
 
 class BaseTagsSchema(BaseModel):
@@ -19,8 +20,8 @@ class ListTagsSchema(BaseTagsSchema):
 
 
 class BasePostSchema(BaseModel):
-    title: Optional[str] = None
-    content: Optional[str] = None
+    title: Optional[TranslationSchema] = None
+    content: Optional[TranslationSchema] = None
 
 
 class CreatePostSchema(BasePostSchema):

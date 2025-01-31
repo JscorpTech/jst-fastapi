@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, ForeignKey
+from sqlalchemy import Column, String, Integer, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from fastapi_core.db import Model
 
@@ -15,8 +15,8 @@ class PostModel(Model):
     __tablename__ = "posts"
 
     id = Column(Integer, primary_key=True, index=True)
-    title: str = Column(String(255))
-    content: str = Column(String)
+    title: str = Column(JSON)
+    content: str = Column(JSON)
 
     tags = relationship("TagsModel", secondary="post_tags", back_populates="posts")
 

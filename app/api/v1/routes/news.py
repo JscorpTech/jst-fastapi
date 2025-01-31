@@ -26,7 +26,7 @@ async def post(
 ) -> _R[_P[List[_schema.ListPostSchema]]]:
     queryset = (
         manager.get_filter().filter(["title", "content"], request).search(["title", "content"], search).queryset()
-    )
+    ).order_by(PostModel.created_at.desc())
     return _R(data=manager.pagination(queryset, request, page, page_size).response())
 
 
