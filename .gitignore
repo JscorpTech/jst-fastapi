@@ -4,6 +4,8 @@ core/http/
 git.diff
 # OS ignores
 *.DS_Store
+test.py
+profiler.html
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
