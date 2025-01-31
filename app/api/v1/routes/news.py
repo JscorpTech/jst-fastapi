@@ -6,10 +6,10 @@ from fastapi_core.pagination import DefaultPagination, PaginationSchema as _P, _
 from fastapi_core.response import _R
 from app.db.database import _DB
 from ..services import news as _services
-from fastapi_core.filters import DefaultFilter, _SEARCH
 from app.db.models import PostModel
 from fastapi import Depends
 from fastapi_core.manager import DBManager
+from fastapi_core.filters import _SEARCH
 
 from .. import schemas as _schema
 
@@ -24,8 +24,10 @@ async def post(
     page_size: _PAGE_SIZE = None,
     search: _SEARCH = None,
 ) -> _R[_P[List[_schema.ListPostSchema]]]:
-    queryset = DefaultFilter(manager.queryset()).search(["title", "content"], search)
-    return _R(data=DefaultPagination(request, page, page_size).queryset(queryset).response())
+    queryset = (
+        manager.get_filter().filter(["title", "content"], request).search(["title", "content"], search).queryset()
+    )
+    return _R(data=manager.pagination(queryset, request, page, page_size).response())
 
 
 @router.post("/post")

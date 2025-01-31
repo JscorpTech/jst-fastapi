@@ -1,13 +1,11 @@
 from pydantic import BaseModel, BeforeValidator
 from typing import Annotated, Generic, TypeVar, Literal
-from pyinstrument import Profiler
 import time
-
-p = Profiler()
-p.start()
+import pyinstrument
 
 T = TypeVar("T")
-
+p = pyinstrument.Profiler()
+p.start()
 
 class Unique(Generic[T]):
 
@@ -30,5 +28,6 @@ def test():
 
 
 test()
+
 p.stop()
 p.print()

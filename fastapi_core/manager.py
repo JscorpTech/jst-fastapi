@@ -1,4 +1,8 @@
 from app.db.database import _DB
+from fastapi_core.filters import DefaultFilter
+from fastapi_core.pagination import DefaultPagination
+from sqlalchemy.orm import Query
+from fastapi import Request
 
 
 class DBManager:
@@ -36,3 +40,9 @@ class DBManager:
         self._db.delete(model)
         self._db.commit()
         return model
+
+    def get_filter(self) -> DefaultFilter:
+        return DefaultFilter(self.queryset())
+
+    def pagination(self, queryset: Query, request: Request, *args, **kwargs) -> DefaultPagination:
+        return DefaultPagination(request, *args, **kwargs).queryset(queryset)
