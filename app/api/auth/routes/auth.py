@@ -1,11 +1,13 @@
 from typing import Annotated
+
 from fastapi import APIRouter, Body, Depends
-from fastapi_core.response import _R
-from ..schemas import auth as _schema
+
 from app import services as _services
 from app.schemas import UserSchema
-from ..services.auth import create_token
+from fastapi_core.response import _R
 
+from ..schemas import auth as _schema
+from ..services.auth import create_token
 
 router = APIRouter(
     prefix="/auth",

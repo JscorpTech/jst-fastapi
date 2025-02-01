@@ -1,5 +1,6 @@
+from sqlalchemy import Column, Integer, String
+
 from fastapi_core.db import Model
-from sqlalchemy import Column, String, Integer
 
 
 class OtpModel(Model):

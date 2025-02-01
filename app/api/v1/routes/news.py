@@ -1,17 +1,17 @@
 from typing import List
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 
-from fastapi_core.pagination import DefaultPagination, PaginationSchema as _P, _PAGE, _PAGE_SIZE
-from fastapi_core.response import _R
 from app.db.database import _DB
-from ..services import news as _services
 from app.db.models import PostModel
-from fastapi import Depends
-from fastapi_core.manager import DBManager
 from fastapi_core.filters import _SEARCH
+from fastapi_core.manager import DBManager
+from fastapi_core.pagination import _PAGE, _PAGE_SIZE, DefaultPagination
+from fastapi_core.pagination import PaginationSchema as _P
+from fastapi_core.response import _R
 
 from .. import schemas as _schema
+from ..services import news as _services
 
 router = APIRouter()
 

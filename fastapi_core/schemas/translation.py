@@ -1,5 +1,7 @@
+from typing import Annotated, Optional
+
 from pydantic import BaseModel, BeforeValidator
-from typing import Optional, Annotated
+
 from fastapi_core.utils.translation import translate
 
 

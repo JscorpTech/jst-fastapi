@@ -1,5 +1,6 @@
 from contextvars import ContextVar
 from typing import Any
+
 from fastapi_core.conf import settings
 
 LANGUAGE = ContextVar("LANGUAGE", default=settings.LANGUAGE)

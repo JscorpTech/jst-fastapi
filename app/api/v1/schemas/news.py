@@ -1,6 +1,8 @@
-from pydantic import BaseModel
 from typing import Optional
-from fastapi_core.schemas.translation import TranslatedField, AutoTranslatedField
+
+from pydantic import BaseModel
+
+from fastapi_core.schemas.translation import AutoTranslatedField, TranslatedField
 
 
 class BaseTagsSchema(BaseModel):
@@ -20,18 +22,19 @@ class ListTagsSchema(BaseTagsSchema):
 
 
 class BasePostSchema(BaseModel):
-    title: Optional[TranslatedField] = None
-    content: Optional[TranslatedField] = None
+    pass
 
 
 class CreatePostSchema(BasePostSchema):
     tags: list[CreateTagsSchema]
+    title: Optional[TranslatedField] = None
+    content: Optional[TranslatedField] = None
 
 
 class ListPostSchema(BasePostSchema):
     id: int
-    title: AutoTranslatedField
-    content: AutoTranslatedField
+    title: Optional[AutoTranslatedField]
+    content: Optional[AutoTranslatedField]
     tags: list[ListTagsSchema]
 
     class Config:

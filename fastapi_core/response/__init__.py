@@ -1,4 +1,4 @@
-from .schema import ResponseSchema, _R
+from .schema import _R, ResponseSchema
 
 __all__ = [
     "ResponseSchema",

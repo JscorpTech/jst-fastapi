@@ -1,22 +1,26 @@
-from random import choices
 import string
+from random import choices
+from typing import Optional, Union
+
 from fastapi import HTTPException
+from sqlalchemy import Column
 from sqlalchemy.orm import Session
-from app.db.models import OtpModel
+
 from app.db.database import _DB
+from app.db.models import OtpModel
 from app.services import EskizService
 from fastapi_core.conf import settings
 
 
 class OtpService:
-    otp: int | None = None
+    otp: Optional[Union[str, Column[int]]] = None
     db: Session
     phone: str | None = None
 
     def __init__(self, db: _DB):
         self.db = db
 
-    def _generate_otp(self) -> str:
+    def _generate_otp(self) -> Union[str, Column[int]]:
         """Generate OTP"""
         if query := self.db.query(OtpModel).filter(OtpModel.phone == self.phone).first():
             return query.otp
@@ -26,7 +30,7 @@ class OtpService:
 
     def _generate_message(self) -> str:
         """Generate OTP message"""
-        self.otp: str = self._generate_otp()
+        self.otp = self._generate_otp()
         return settings.OTP_MESSAGE % {"otp": self.otp}
 
     def send_otp(self, phone: str):

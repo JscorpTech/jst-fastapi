@@ -1,7 +1,8 @@
-from .user import UserModel
+from app.db.database import Base
+
 from .auth import OtpModel
 from .news import PostModel, TagsModel
-from app.db.database import Base
+from .user import UserModel
 
 __all__ = [
     "UserModel",

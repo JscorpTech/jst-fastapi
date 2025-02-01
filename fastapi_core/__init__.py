@@ -10,9 +10,9 @@ __all__ = [
 
 
 def setup() -> FastAPI:
-    from fastapi_core.conf import settings
-    from app.db.models import Base
     from app.db.database import engine
+    from app.db.models import Base
+    from fastapi_core.conf import settings
 
     Base.metadata.create_all(bind=engine)
 

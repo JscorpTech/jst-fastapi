@@ -1,6 +1,8 @@
-from fastapi_core.conf import settings
-import requests
 from abc import ABC, abstractmethod
+
+import requests
+
+from fastapi_core.conf import settings
 
 
 class SmsService(ABC):

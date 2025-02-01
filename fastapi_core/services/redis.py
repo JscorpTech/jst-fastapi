@@ -1,12 +1,15 @@
-import redis.asyncio as redis
-from fastapi_core.conf import settings
 import logging
+from typing import Optional
+
+import redis.asyncio as redis
+
+from fastapi_core.conf import settings
 
 logger = logging.getLogger(__name__)
 
 
 class RedisService:
-    _pool: redis.ConnectionPool = None
+    _pool: Optional[redis.ConnectionPool] = None
 
     @classmethod
     def get_redis(cls):
@@ -31,7 +34,7 @@ class RedisService:
             raise
 
     @classmethod
-    async def set_key(cls, key: str, value: str, ex: int = None):
+    async def set_key(cls, key: str, value: str, ex: Optional[int] = None):
         async with cls.get_redis() as conn:
             await conn.set(key, value, ex=ex)
 

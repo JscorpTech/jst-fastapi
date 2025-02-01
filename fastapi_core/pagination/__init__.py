@@ -1,8 +1,11 @@
-from .schema import PaginationSchema, Link
+from typing import Annotated, Optional
+
+from fastapi import Query, Request
 from sqlalchemy.orm import Query as Queryset
-from fastapi import Request, Query
+
 from fastapi_core.utils import build_uri
-from typing import Annotated
+
+from .schema import Link, PaginationSchema
 
 _PAGE = Annotated[int | None, Query()]
 _PAGE_SIZE = Annotated[int | None, Query()]
@@ -15,7 +18,7 @@ class BasePagination:
     _queryset: Queryset
     _request: Request
 
-    def __init__(self, request: Request, page: int = None, page_size: int = None):
+    def __init__(self, request: Request, page: Optional[int] = None, page_size: Optional[int] = None):
         self.page = page if page else self.page
         self.page_size = page_size if page_size else self.page_size
         self._request = request
@@ -26,7 +29,7 @@ class BasePagination:
         return self
 
     @property
-    def next_url(self) -> str:
+    def next_url(self) -> Optional[str]:
         return (
             build_uri(self._request, f"?page={self.page + 1}")
             if self.page < self._total // self.page_size + 1
@@ -34,7 +37,7 @@ class BasePagination:
         )
 
     @property
-    def prev_url(self) -> str:
+    def prev_url(self) -> Optional[str]:
         return build_uri(self._request, f"?page={self.page - 1}") if self.page > 1 else None
 
     @property

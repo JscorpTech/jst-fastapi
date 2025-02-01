@@ -1,6 +1,8 @@
-from app.db.models.news import PostModel, TagsModel, PostTagModel
+from typing import Any, Dict, List, Optional
+
 from app.api.v1.schemas import news as _schema
 from app.db.database import _DB
+from app.db.models.news import PostModel, PostTagModel, TagsModel
 
 
 async def create_post(db: _DB, post: _schema.CreatePostSchema) -> PostModel:
@@ -9,11 +11,11 @@ async def create_post(db: _DB, post: _schema.CreatePostSchema) -> PostModel:
     post = PostModel(**post_data)
     db.add(post)
     db.commit()
-    await create_tags(db, tags, post.id)
+    await create_tags(db, tags, int(post.id))
     return post
 
 
-async def create_tags(db: _DB, tags: _schema.CreateTagsSchema, post_id: int):
+async def create_tags(db: _DB, tags: List[Dict[str, Any]], post_id: int):
     for tag in tags:
         tag_instance = db.query(TagsModel).filter(TagsModel.name == tag["name"]).first()
         if not tag_instance:
@@ -25,7 +27,7 @@ async def create_tags(db: _DB, tags: _schema.CreateTagsSchema, post_id: int):
     return tag
 
 
-async def get_post(db: _DB, post_id: int) -> PostModel:
+async def get_post(db: _DB, post_id: int) -> Optional[PostModel]:
     return db.query(PostModel).filter(PostModel.id == post_id).first()
 
 

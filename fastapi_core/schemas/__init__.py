@@ -1,6 +1,8 @@
-from pydantic import BaseModel as PyBaseModel
-from fastapi_core.exceptions import APIException
+from typing import List, Optional
 
+from pydantic import BaseModel as PyBaseModel
+
+from fastapi_core.exceptions import APIException
 
 __all__ = [
     "BaseModel",
@@ -8,7 +10,7 @@ __all__ = [
 
 
 class BaseModel(PyBaseModel):
-    async def is_valid(self, fields: list[str] = None, raise_exception: bool = False):
+    async def is_valid(self, fields: Optional[List[str]] = None, raise_exception: bool = False):
         fields = fields or [func.replace("validate_", "") for func in dir(self) if func.startswith("validate_")]
         result = {}
         errors = {}

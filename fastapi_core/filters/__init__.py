@@ -1,7 +1,9 @@
+from typing import Annotated, List
+
+from fastapi import Query as Q
+from fastapi import Request
+from sqlalchemy import and_, or_
 from sqlalchemy.orm import Query
-from typing import List, Annotated
-from fastapi import Query as Q, Request
-from sqlalchemy import or_, and_
 
 _SEARCH = Annotated[str | None, Q()]
 
@@ -29,7 +31,8 @@ class DefaultFilter(BaseFilter):
     def search(self, fields: List[str], value: str):
         if value is None:
             return self
-        self._queryset = self._queryset.filter(or_(getattr(self.model, field).ilike(f"%{value}%") for field in fields))
+        conditions = [getattr(self.model, field).ilike(f"%{value}%") for field in fields]
+        self._queryset = self._queryset.filter(or_(*conditions))
         return self
 
     def filter(self, fields: List[str], request: Request):

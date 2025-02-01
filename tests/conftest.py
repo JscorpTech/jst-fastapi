@@ -1,11 +1,11 @@
-from app.main import app
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from app.db.models import Base
-from app.db.database import get_db
-from fastapi.testclient import TestClient
 
+from app.db.database import get_db
+from app.db.models import Base
+from app.main import app
 
 SQLALCHEMY_DATABASE_URL = "postgresql://postgres:2309@db:5432/test"
 

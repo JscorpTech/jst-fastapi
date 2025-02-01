@@ -1,15 +1,15 @@
-from fastapi_core import setup
 import os
+
+from fastapi_core import setup
 
 os.environ.setdefault("SETTINGS_MODULE", "app.core.settings.local")
 setup()  # noqa
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-from app.db.models import Base
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
+from app.db.models import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -25,7 +25,7 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 target_metadata = Base.metadata
-config.set_main_option("sqlalchemy.url", os.getenv("DATABASE_URL"))
+config.set_main_option("sqlalchemy.url", str(os.getenv("DATABASE_URL")))
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

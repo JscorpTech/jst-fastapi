@@ -1,6 +1,7 @@
 import logging  # noqa
-from tests.conftest import TestingSessionLocal
+
 from app.db.models import PostModel
+from tests.conftest import TestingSessionLocal
 
 
 class TestNews:
