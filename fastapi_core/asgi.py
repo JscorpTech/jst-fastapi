@@ -1,5 +1,4 @@
 from fastapi import FastAPI
-
 import fastapi_core
 
 

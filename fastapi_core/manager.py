@@ -2,13 +2,13 @@ from fastapi import Request
 from sqlalchemy.orm import Query
 
 from app.db.database import _DB
-from fastapi_core.db.base import Model
 from fastapi_core.filters import DefaultFilter
 from fastapi_core.pagination import DefaultPagination
+from typing import Any
 
 
 class DBManager:
-    _model: Model
+    _model: Any
     _db: _DB
 
     def __init__(self, model, db):
