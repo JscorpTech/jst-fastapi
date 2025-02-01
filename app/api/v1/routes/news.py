@@ -19,7 +19,7 @@ router = APIRouter()
 @router.get("/post")
 async def post(
     request: Request,
-    manager: DBManager = Depends(PostModel.manager),
+    manager: DBManager[PostModel] = Depends(PostModel.manager),
     page: _PAGE = None,
     page_size: _PAGE_SIZE = None,
     search: _SEARCH = None,

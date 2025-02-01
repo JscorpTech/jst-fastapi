@@ -13,8 +13,13 @@ class Model(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     @classmethod
-    def manager(self, db: _DB) -> DBManager:
+    def manager(self, db: _DB):
         return DBManager(self, db)
+
+    class NotFound(Exception):
+
+        def __init__(self, *args):
+            super().__init__(*args)
 
     def __str__(self) -> str:
         return "Object with id: {}".format(self.id)
