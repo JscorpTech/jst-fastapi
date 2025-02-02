@@ -5,7 +5,7 @@ import jwt
 from fastapi import HTTPException
 
 from app.db.models import UserModel
-from fastapi_core.conf import settings
+from fastx.conf import settings
 
 
 async def create_token(user: UserModel) -> dict:

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from fastapi_core.asgi import application
+from fastx.asgi import application
 
 __version__ = "0.1.0"
 __all__ = [
@@ -12,7 +12,7 @@ __all__ = [
 def setup() -> FastAPI:
     from app.db.database import engine
     from app.db.models import Base
-    from fastapi_core.conf import settings
+    from fastx.conf import settings
 
     Base.metadata.create_all(bind=engine)
 

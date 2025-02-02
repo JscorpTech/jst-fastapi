@@ -1,6 +1,6 @@
 from fastapi import responses
 
-from fastapi_core.response import ResponseSchema
+from fastx.response import ResponseSchema
 
 
 def api_exception_handler(request, exc):

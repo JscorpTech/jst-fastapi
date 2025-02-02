@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 import requests
 
-from fastapi_core.conf import settings
+from fastx.conf import settings
 
 
 class SmsService(ABC):

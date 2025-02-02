@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel as PyBaseModel
 
-from fastapi_core.exceptions import APIException
+from fastx.exceptions import APIException
 
 __all__ = [
     "BaseModel",

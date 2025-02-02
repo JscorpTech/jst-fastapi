@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-import fastapi_core
+import fastx
 
 
 def application() -> FastAPI:
-    return fastapi_core.setup()
+    return fastx.setup()

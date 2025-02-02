@@ -4,7 +4,7 @@ from fastapi import APIRouter, Body, Depends
 
 from app import services as _services
 from app.schemas import UserSchema
-from fastapi_core.response import _R
+from fastx.response import _R
 
 from ..schemas import auth as _schema
 from ..services.auth import create_token

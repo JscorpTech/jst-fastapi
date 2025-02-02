@@ -2,7 +2,7 @@ from typing import Annotated, Optional
 
 from pydantic import BaseModel, BeforeValidator
 
-from fastapi_core.utils.translation import translate
+from fastx.utils.translation import translate
 
 
 class TranslatedField(BaseModel):

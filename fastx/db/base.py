@@ -2,7 +2,7 @@ from sqlalchemy import Column, DateTime, Integer
 from sqlalchemy.sql import func
 
 from app.db.database import _DB, Base
-from fastapi_core.manager import DBManager
+from fastx.manager import DBManager
 
 
 class Model(Base):
