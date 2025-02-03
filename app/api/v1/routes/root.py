@@ -3,6 +3,7 @@ from fastapi.responses import FileResponse, PlainTextResponse
 from fastx.storage.file import FileStorage
 import pathlib
 from typing import Annotated
+from fastx.storage import default_storage
 
 
 router = APIRouter()
@@ -10,7 +11,7 @@ router = APIRouter()
 
 @router.get("/")
 async def root(request: Request) -> dict:
-    storage = FileStorage()
+    storage = default_storage()
     return {"detail": "ok", "file": storage.download("image.png", request)}
 
 

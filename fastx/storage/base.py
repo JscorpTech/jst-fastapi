@@ -52,7 +52,7 @@ class BaseStorage(ABC):
         super().__init__()
 
     @abstractmethod
-    def download(self, path: Union[str, Path], request: Request = None) -> str:
+    def download(self, path: Union[str, Path], request: Optional[Request] = None) -> str:
         pass
 
     @abstractmethod
