@@ -8,7 +8,7 @@ T = TypeVar("T")
 class ResponseSchema(BaseModel, Generic[T]):
     status: bool = True
     data: T | List[T] | Dict[str, T] | None = None
-    message: str | None = None
+    message: str | None = "🫠 OK"
 
 
 _R = ResponseSchema

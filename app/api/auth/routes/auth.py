@@ -1,16 +1,16 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Depends, UploadFile, Request
+from fastapi import APIRouter, Body, Depends, File, UploadFile
 
 from app import services as _services
+from app.db.models import UserModel
 from app.schemas import UserSchema
-from fastx.response import _R
+from fastx.schema.response import _R
+from fastx.storage.base import BaseStorage
+from fastx.utils import default_storage, upload_file
 
 from ..schemas import auth as _schema
-from app.db.models import UserModel
 from ..services.auth import create_token
-from fastx.utils import upload_file, default_storage
-
 
 router = APIRouter(
     prefix="/auth",
@@ -62,9 +62,18 @@ async def update(
 
 
 @router.patch("/update/avatar")
-async def update_avatar(file: UploadFile, request: Request) -> _R:
+async def update_avatar(
+    file: Annotated[UploadFile, File()],
+    service: Annotated[_services.AuthService, Depends()],
+    user: Annotated[UserModel, Depends(_services.get_user)],
+    storage: Annotated[BaseStorage, Depends(default_storage)],
+) -> _R[_schema.UpdateAvatarResponse]:
     path = await upload_file("avatar/", file)
-    return _R(data={"detail": default_storage().download(path, request)})
+    avatar = user.avatar
+    await service.update_user(user.phone, {"avatar": path})
+    if avatar is not None:
+        storage.delete(avatar)
+    return _R(data=_schema.UpdateAvatarResponse(avatar=path))
 
 
 @router.get("/me")

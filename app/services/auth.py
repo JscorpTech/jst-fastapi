@@ -1,16 +1,16 @@
 import json
-from typing import Optional, Union, Dict, Any
+from typing import Any, Dict, Optional, Union
 
 from fastapi import HTTPException
 from passlib.hash import bcrypt
+from sqlalchemy import Column
 from sqlalchemy.orm import Session
 
 from app.api.auth.schemas.auth import RegisterSchema
 from app.db.database import _DB
 from app.db.models import UserModel
-from fastx.services import RedisService
 from fastx.exceptions import APIException
-from sqlalchemy import Column
+from fastx.services import RedisService
 
 
 class AuthService:

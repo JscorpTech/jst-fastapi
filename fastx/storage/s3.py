@@ -1,8 +1,9 @@
-from fastx.storage.base import BaseStorage
-from fastx.services.s3 import S3Service
-from pathlib import Path
-from fastx.conf import settings
 from io import BytesIO
+from pathlib import Path
+
+from fastx.conf import settings
+from fastx.services.s3 import S3Service
+from fastx.storage.base import BaseStorage
 
 
 class S3Storage(BaseStorage):
@@ -12,10 +13,13 @@ class S3Storage(BaseStorage):
         super().__init__()
         self._service = S3Service()
 
-    def download(self, path, request=None):
+    def download_url(self, path, request=None):
         if not str(path).startswith("/"):
             path = "/%s" % path
         return "%s%s" % (settings.S3_URL, path)
+
+    def delete(self, path, raise_exception=False):
+        return None
 
     def path(self, path):
         return path

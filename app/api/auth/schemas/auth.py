@@ -1,7 +1,8 @@
-from pydantic import Field
-
-from fastx.schemas import BaseModel
 from typing import Optional
+
+from pydantic import BaseModel, Field
+
+from fastx.schema.fields import FileField
 
 
 class LoginSchema(BaseModel):
@@ -24,6 +25,10 @@ class UpdateSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class UpdateAvatarResponse(BaseModel):
+    avatar: FileField
 
 
 class TokenSchema(BaseModel):

@@ -1,20 +1,25 @@
-from fastapi import Request
 import importlib
-from uuid import uuid4
-from fastapi import UploadFile
-from typing import Union, Optional, Literal, TypeAlias
-from pathlib import Path
 from mimetypes import guess_extension
+from pathlib import Path
+from typing import Literal, Optional, TypeAlias, Union
+from uuid import uuid4
+
+from fastapi import Request, UploadFile
+
 from fastx.conf import settings
 from fastx.storage.base import BaseStorage
-from fastx.storage.s3 import S3Storage
 from fastx.storage.file import FileStorage
+from fastx.storage.s3 import S3Storage
 
 _STORAGES: TypeAlias = Literal["s3", "file"]
 
 
 def build_absolute_uri(request: Request, path: str) -> str:
     return f"{request.base_url}{path}"
+
+
+def generate_link(value: str) -> str:
+    return default_storage().download_url(value)
 
 
 def build_uri(request: Request, path: str) -> str:
@@ -28,17 +33,25 @@ def import_module(module: str):
     return getattr(importlib.import_module(module_path), object_name)()
 
 
-def generate_filename(extension: str) -> str:
-    return "%s%s" % (uuid4(), extension)
+def generate_filename(file: UploadFile) -> str:
+    filename = file.filename
+    if filename is None:
+        extension = None
+        if file.content_type is not None:
+            extension = guess_extension(file.content_type)
+        if extension is None:
+            extension = ".bin"
+        filename = extension
+    else:
+        if len(filename) > 50:
+            filename = filename[-50:]
+        filename = filename.replace(" ", "_").replace(",", "_").replace("/", "_").replace("\\", "_")
+    return "%s_%s" % (uuid4(), filename)
 
 
 async def upload_file(upload_dir: Union[str, Path], file: UploadFile, storage: Optional[_STORAGES] = None):
-    extension = None
-    if file.content_type is not None:
-        extension = guess_extension(file.content_type)
-    if extension is None:
-        extension = ".bin"
-    file_name = generate_filename(extension)
+    Path(default_storage().path(upload_dir)).mkdir(parents=True, exist_ok=True)
+    file_name = generate_filename(file)
     path = f"{upload_dir}{file_name}"
     default_storage(storage).write(await file.read(), path, "wb")
     return path

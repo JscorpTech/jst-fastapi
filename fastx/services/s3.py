@@ -1,8 +1,8 @@
-from fastx.conf import settings
-
 # from typing import Any, Union
 import boto3  # type: ignore
 from botocore.client import BaseClient  # type: ignore
+
+from fastx.conf import settings
 
 
 class S3Service:
