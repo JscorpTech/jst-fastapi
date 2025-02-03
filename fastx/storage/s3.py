@@ -2,6 +2,7 @@ from fastx.storage.base import BaseStorage
 from fastx.services.s3 import S3Service
 from pathlib import Path
 from fastx.conf import settings
+from io import BytesIO
 
 
 class S3Storage(BaseStorage):
@@ -29,5 +30,7 @@ class S3Storage(BaseStorage):
     def write(self, content, path, mode="w"):
         if isinstance(content, (str, Path)):
             content = open(content, "rb")
+        elif not isinstance(content, (BytesIO,)):
+            content = BytesIO(content)
         self._service.get_connection().upload_fileobj(content, self._service.bucket, path)
         return path
