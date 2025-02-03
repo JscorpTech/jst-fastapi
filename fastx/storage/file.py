@@ -1,26 +1,25 @@
-from fastx.storage.base import BaseStorage, OpenTextModeWriting, OpenTextModeReading, OpenTextMode
-from typing import Optional, Any, Union, IO
+from fastx.storage.base import BaseStorage
+from typing import Union
+from pathlib import Path
 
 
 class FileStorage(BaseStorage):
-    _basedir: str
-
     def __init__(self):
         super().__init__()
 
-    def open(self, path: str, mode: OpenTextMode = "r") -> Optional[Union[IO[Any]]]:
-        with open(path, mode) as file:
+    def _get_path(self, path: Union[str, Path]):
+        return self._basedir.joinpath(path)
+
+    def open(self, path, mode="r"):
+        with open(self._get_path(path), mode) as file:
             return file
 
-    def write(self, content: Any, path: str, mode: OpenTextModeWriting = "w") -> Union[str]:
+    def write(self, content, path, mode="w"):
+        path = self._get_path(path)
         with open(path, mode) as file:
             file.write(content)
         return path
 
-    def read(self, path: str, mode: OpenTextModeReading = "r") -> Union[str]:
-        with open(path, mode) as file:
+    def read(self, path, mode="r"):
+        with open(self._get_path(path), mode) as file:
             return file.read()
-
-
-obj = FileStorage()
-obj.open("salom", "+at")

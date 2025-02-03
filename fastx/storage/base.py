@@ -1,6 +1,8 @@
 from abc import ABC
 from abc import abstractmethod
 from typing import Optional, IO, Any, Union, TypeAlias, Literal
+from fastx.conf import settings
+from pathlib import Path
 
 OpenTextModeUpdating: TypeAlias = Literal[
     "r+",
@@ -42,18 +44,29 @@ OpenTextMode: TypeAlias = OpenTextModeUpdating | OpenTextModeWriting | OpenTextM
 
 
 class BaseStorage(ABC):
+    _basedir: Path
 
     def __init__(self) -> None:
+        self._basedir: Path = settings.STORAGE_DIR
         super().__init__()
 
     @abstractmethod
-    def open(self, path: str, mode: OpenTextMode) -> Optional[Union[IO[Any]]]:
+    def open(self, path: Union[str, Path], mode: OpenTextMode = "r") -> Optional[Union[IO[Any]]]:
+        """
+        Fayilni ochish
+        """
         pass
 
     @abstractmethod
-    def write(self, content: Any, path: str, mode: OpenTextModeWriting):
+    def write(self, content: Any, path: Union[str, Path], mode: OpenTextModeWriting = "w") -> Union[str, Path]:
+        """
+        Yozish
+        """
         pass
 
     @abstractmethod
-    def read(self, path: str, mode: OpenTextModeReading) -> Union[str]:
+    def read(self, path: Union[str, Path], mode: OpenTextModeReading = "r") -> Union[str]:
+        """
+        O'qish
+        """
         pass
