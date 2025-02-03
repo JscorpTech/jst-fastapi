@@ -5,7 +5,6 @@ import pathlib
 from typing import Annotated
 from fastx.utils import default_storage
 
-
 router = APIRouter()
 
 
