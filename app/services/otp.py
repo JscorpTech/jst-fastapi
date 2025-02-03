@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.db.database import _DB
 from app.db.models import OtpModel
 from app.services.sms import EskizService
-from fastapi_core.conf import settings
+from fastx.conf import settings
 
 
 class OtpService:

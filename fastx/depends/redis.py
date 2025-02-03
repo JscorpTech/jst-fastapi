@@ -2,7 +2,7 @@ from typing import Generator
 
 from redis import Redis
 
-from fastapi_core.services import RedisService
+from fastx.services import RedisService
 
 
 def get_redis() -> Generator[Redis, None, None]:

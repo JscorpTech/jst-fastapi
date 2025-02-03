@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from fastapi_core.schemas.translation import AutoTranslatedField, TranslatedField
+from fastx.schemas.translation import AutoTranslatedField, TranslatedField
 
 
 class BaseTagsSchema(BaseModel):

@@ -1,6 +1,6 @@
 import os
 
-from fastapi_core import setup
+from fastx import setup
 
 os.environ.setdefault("SETTINGS_MODULE", "app.core.settings.local")
 setup()  # noqa

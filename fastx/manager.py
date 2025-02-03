@@ -2,20 +2,20 @@ from typing import List, TypeVar, Generic, Optional
 
 from fastapi import Request
 from sqlalchemy.orm import Query
-from fastapi_core.db.base import Model
+from fastx.db.base import BaseModel
 
-from app.db.database import _DB
-from fastapi_core.filters import DefaultFilter
-from fastapi_core.pagination import DefaultPagination
+from fastx.filters import DefaultFilter
+from fastx.pagination import DefaultPagination
+from sqlalchemy.orm import Session
 
-T = TypeVar("T", bound=Model)
+T = TypeVar("T", bound=BaseModel)
 
 
 class DBManager(Generic[T]):
     _model: T
-    _db: _DB
+    _db: Session
 
-    def __init__(self, model: T, db) -> None:
+    def __init__(self, model: T, db: Session) -> None:
         self._model = model
         self._db = db
 
@@ -37,7 +37,7 @@ class DBManager(Generic[T]):
     def update(self, id: int, **kwargs) -> Optional[T]:
         model = self._db.query(self._model).filter(self._model.id == id).first()
         if not model:
-            raise Model.NotFound()
+            raise BaseModel("object not found")
         for key, value in kwargs.items():
             setattr(model, key, value)
         self._db.commit()

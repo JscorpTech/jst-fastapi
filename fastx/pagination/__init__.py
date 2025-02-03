@@ -3,7 +3,7 @@ from typing import Annotated, Optional
 from fastapi import Query, Request
 from sqlalchemy.orm import Query as Queryset
 
-from fastapi_core.utils import build_uri
+from fastx.utils import build_uri
 
 from .schema import Link, PaginationSchema
 

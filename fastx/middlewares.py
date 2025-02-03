@@ -1,8 +1,8 @@
 from fastapi import Request
 from pyinstrument import Profiler
 
-from fastapi_core.conf import settings
-from fastapi_core.utils.translation import set_language
+from fastx.conf import settings
+from fastx.utils.translation import set_language
 
 
 async def profiler_middleware(request, call_next):

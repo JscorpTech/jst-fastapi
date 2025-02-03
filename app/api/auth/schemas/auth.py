@@ -1,6 +1,6 @@
 from pydantic import Field
 
-from fastapi_core.schemas import BaseModel
+from fastx.schemas import BaseModel
 
 
 class LoginSchema(BaseModel):

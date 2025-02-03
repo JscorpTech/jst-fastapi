@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from app.api.auth.schemas.auth import RegisterSchema
 from app.db.database import _DB
 from app.db.models import UserModel
-from fastapi_core.services import RedisService
+from fastx.services import RedisService
 
 
 class AuthService:

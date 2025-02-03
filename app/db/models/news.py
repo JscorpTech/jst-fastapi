@@ -3,7 +3,7 @@ from typing import Any
 from sqlalchemy import JSON, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from fastapi_core.db import Model
+from fastx.db import Model
 
 
 class PostTagModel(Model):

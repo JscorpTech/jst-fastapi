@@ -3,7 +3,7 @@ from typing import Optional
 
 import redis.asyncio as redis
 
-from fastapi_core.conf import settings
+from fastx.conf import settings
 
 logger = logging.getLogger(__name__)
 
