@@ -15,3 +15,4 @@ pyinstrument
 python-multipart
 pytest
 httpx
+boto3
