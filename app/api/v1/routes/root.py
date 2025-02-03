@@ -1,11 +1,22 @@
-from fastapi import APIRouter
-from fastx.storage import default_storage
+from fastapi import APIRouter, Request, Path
+from fastapi.responses import FileResponse, PlainTextResponse
+from fastx.storage.file import FileStorage
+import pathlib
+from typing import Annotated
 
 
 router = APIRouter()
 
 
 @router.get("/")
-async def root() -> dict:
-    detail: str = default_storage().read("test.txt")
-    return {"detail": detail}
+async def root(request: Request) -> dict:
+    storage = FileStorage()
+    return {"detail": "ok", "file": storage.download("image.png", request)}
+
+
+@router.get("/storage/{file_path:path}")
+def storage(file_path: Annotated[str, Path()]):
+    file = pathlib.Path(FileStorage().path(file_path))
+    if not file.exists():
+        return PlainTextResponse("File not found", 404)
+    return FileResponse(file, media_type="application/octet-stream")

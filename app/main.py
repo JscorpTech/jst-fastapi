@@ -16,6 +16,5 @@ app.include_router(auth.router)
 app.exception_handler(APIException)(api_exception_handler)
 app.exception_handler(HTTPException)(http_exception_handler)
 
-
 app.middleware("http")(translation_middleware)
 app.middleware("http")(profiler_middleware)
