@@ -1,5 +1,5 @@
 import json
-from typing import Optional, Union
+from typing import Optional, Union, Dict, Any
 
 from fastapi import HTTPException
 from passlib.hash import bcrypt
@@ -9,6 +9,8 @@ from app.api.auth.schemas.auth import RegisterSchema
 from app.db.database import _DB
 from app.db.models import UserModel
 from fastx.services import RedisService
+from fastx.exceptions import APIException
+from sqlalchemy import Column
 
 
 class AuthService:
@@ -16,6 +18,22 @@ class AuthService:
 
     def __init__(self, db: _DB) -> None:
         self.db = db
+
+    async def is_already_user(self, phone: Union[str, int], raise_exception: bool = False) -> bool:
+        user = self.db.query(UserModel).filter(UserModel.phone == phone).first()
+        if user is not None:
+            if raise_exception:
+                raise APIException(APIException.VALIDATION_ERROR, 422, data={"phone": "User already"})
+            return True
+        return False
+
+    async def update_user(self, phone: Union[int, str, Column[str]], user_data: Dict[str, Any]) -> Dict[str, Any]:
+        user_instance = self.db.query(UserModel).filter(UserModel.phone == phone).first()
+        for key, value in user_data.items():
+            setattr(user_instance, key, value)
+        self.db.commit()
+        self.db.refresh(user_instance)
+        return user_data
 
     async def save_user_redis(self, user: RegisterSchema):
         return await RedisService.set_key(self._redis_key(user.phone), user.model_dump_json(), ex=60 * 60)

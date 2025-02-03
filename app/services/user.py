@@ -14,5 +14,5 @@ async def get_user(db: _DB, token: str = Depends(oauth2_scheme)) -> Optional[Use
     user = await _services.jwt_decode(token)
     user_instance = db.query(UserModel).filter(UserModel.id == user["sub"]).first()
     if not user_instance:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=201, detail="User not found")
     return user_instance

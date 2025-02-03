@@ -3,8 +3,7 @@ from fastapi.responses import FileResponse, PlainTextResponse
 from fastx.storage.file import FileStorage
 import pathlib
 from typing import Annotated
-from fastx.storage import default_storage
-
+from fastx.utils import default_storage
 
 router = APIRouter()
 

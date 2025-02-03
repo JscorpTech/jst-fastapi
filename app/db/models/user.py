@@ -7,10 +7,11 @@ from fastx.db import Model
 class UserModel(Model):
     __tablename__ = "users"
 
-    phone = Column(String(255))
+    phone = Column(String(255), unique=True)
     password = Column(String(255))
     first_name = Column(String(255))
     last_name = Column(String(255))
+    avatar = Column(String, nullable=True)
     email = Column(String(255), nullable=True)
     tokens = relationship("UserTokenModel", back_populates="user")
 
