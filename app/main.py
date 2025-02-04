@@ -6,7 +6,7 @@ from app.api.v1 import routes as v1_routes
 from fastx.asgi import application
 from fastx.exceptions import APIException
 from fastx.handlers import api_exception_handler, http_exception_handler, request_validation_exception_handler
-from fastx.middlewares import profiler_middleware, translation_middleware
+from fastx.middlewares import translation_middleware  # profiler_middleware
 
 app = application()
 

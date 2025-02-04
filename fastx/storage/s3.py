@@ -19,7 +19,7 @@ class S3Storage(BaseStorage):
         return "%s%s" % (settings.S3_URL, path)
 
     def delete(self, path, raise_exception=False):
-        return None
+        self._service.get_connection().delete_object(Bucket=self._service.bucket, Key=path)
 
     def path(self, path):
         return path

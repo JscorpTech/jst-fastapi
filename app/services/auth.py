@@ -23,7 +23,7 @@ class AuthService:
         user = self.db.query(UserModel).filter(UserModel.phone == phone).first()
         if user is not None:
             if raise_exception:
-                raise APIException(APIException.VALIDATION_ERROR, 422, data={"phone": "User already"})
+                raise APIException(APIException.VALIDATION_ERROR, 400, data={"phone": "User already"})
             return True
         return False
 

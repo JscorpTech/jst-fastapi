@@ -49,7 +49,7 @@ def generate_filename(file: UploadFile) -> str:
     return "%s_%s" % (uuid4(), filename)
 
 
-async def upload_file(upload_dir: Union[str, Path], file: UploadFile, storage: Optional[_STORAGES] = None):
+async def upload_file(upload_dir: Union[str, Path], file: UploadFile, storage: Optional[_STORAGES] = None) -> str:
     Path(default_storage().path(upload_dir)).mkdir(parents=True, exist_ok=True)
     file_name = generate_filename(file)
     path = f"{upload_dir}{file_name}"

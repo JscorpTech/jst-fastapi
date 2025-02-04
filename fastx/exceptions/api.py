@@ -4,7 +4,7 @@ from fastapi import HTTPException
 
 
 class APIException(HTTPException):
-    VALIDATION_ERROR = "Oops! Validation error"
+    VALIDATION_ERROR = "😰 Oops! Validation error"
 
     def __init__(self, detail: Optional[str] = None, status_code: int = 400, data: list | dict = []) -> None:
         self.data = data

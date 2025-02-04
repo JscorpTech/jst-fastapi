@@ -1,7 +1,7 @@
 FROM python:3.13-alpine
 
 WORKDIR /code
-
+RUN apk add --no-cache file
 COPY requirements.txt .
 RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt
 

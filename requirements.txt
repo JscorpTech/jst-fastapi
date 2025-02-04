@@ -1,18 +1,19 @@
 fastapi
 redis
-uvicorn
+uvicorn # asgi runner
 tomli_w
-passlib
-environs
-bcrypt
+passlib # password hashing
+environs # .env reader
+bcrypt # password hashing
 requests
-pyjwt
+pyjwt # jwt authentication
 asgiref
-psycopg2-binary
-sqlalchemy
-alembic
-pyinstrument
-python-multipart
-pytest
-httpx
-boto3
+psycopg2-binary # postgresql driver
+sqlalchemy # database
+alembic # migrations control
+pyinstrument # profiling
+python-multipart # fastapi file upload
+pytest # pytest
+httpx # pytest
+boto3 # s3 storage
+python-magic # validate file mime type

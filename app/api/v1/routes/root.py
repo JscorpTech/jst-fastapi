@@ -4,16 +4,15 @@ from typing import Annotated
 from fastapi import APIRouter, Path, Request
 from fastapi.responses import FileResponse, PlainTextResponse
 
+from fastx.schema.response import _R
 from fastx.storage.file import FileStorage
-from fastx.utils import default_storage
 
 router = APIRouter()
 
 
 @router.get("/")
-async def root(request: Request) -> dict:
-    storage = default_storage()
-    return {"detail": "ok", "file": storage.download_url("image.png", request)}
+async def root(request: Request) -> _R:
+    return _R()
 
 
 @router.get("/storage/{file_path:path}")
