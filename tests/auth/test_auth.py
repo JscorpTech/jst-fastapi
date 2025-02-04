@@ -1,10 +1,16 @@
 import logging  # noqa
 
+from tests.conftest import TestingSessionLocal
+
 
 class TestAuth:
 
     def setup_method(self):
+        self.db = TestingSessionLocal()
         logging.info("run")
+
+    def teardown_method(self):
+        self.db.close()
 
     def test_register(self, client):
         response = client.post(

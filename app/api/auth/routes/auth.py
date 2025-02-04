@@ -1,16 +1,17 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Body, Depends, UploadFile, Request
+from fastapi import APIRouter, Body, Depends, File, UploadFile
 
 from app import services as _services
+from app.db.models import UserModel
 from app.schemas import UserSchema
-from fastx.response import _R
+from fastx.schema.response import _R
+from fastx.storage.base import BaseStorage
+from fastx.utils import default_storage, upload_file
+from fastx.utils.validation import validate_mine
 
 from ..schemas import auth as _schema
-from app.db.models import UserModel
 from ..services.auth import create_token
-from fastx.utils import upload_file, default_storage
-
 
 router = APIRouter(
     prefix="/auth",
@@ -18,7 +19,7 @@ router = APIRouter(
 )
 
 
-@router.post("/register")
+@router.post("/register", summary="Register new user")
 async def register(
     user: Annotated[_schema.RegisterSchema, Body()],
     service: Annotated[_services.AuthService, Depends()],
@@ -30,7 +31,7 @@ async def register(
     return _R(data=user)
 
 
-@router.post("/confirm")
+@router.post("/confirm", summary="confirm verification code")
 async def confirm(
     confirm: _schema.ConfirmSchema,
     service: Annotated[_services.AuthService, Depends()],
@@ -41,7 +42,7 @@ async def confirm(
     return _R(status=True, data=_schema.TokenSchema(**await create_token(user)))
 
 
-@router.post("/login")
+@router.post("/login", summary="Login already user")
 async def login(
     user: Annotated[_schema.LoginSchema, Body()],
     service: Annotated[_services.AuthService, Depends()],
@@ -50,7 +51,7 @@ async def login(
     return _R(status=True, data=_schema.TokenSchema(**await create_token(user)))
 
 
-@router.patch("/update")
+@router.patch("/update", summary="Update user information")
 async def update(
     update_user: _schema.UpdateSchema,
     service: Annotated[_services.AuthService, Depends()],
@@ -61,12 +62,22 @@ async def update(
     return _R(data=user_data)
 
 
-@router.patch("/update/avatar")
-async def update_avatar(file: UploadFile, request: Request) -> _R:
+@router.patch("/update/avatar", summary="Update user avatar")
+async def update_avatar(
+    file: Annotated[UploadFile, File()],
+    service: Annotated[_services.AuthService, Depends()],
+    user: Annotated[UserModel, Depends(_services.get_user)],
+) -> _R[_schema.UpdateAvatarResponse]:
+    await validate_mine(file, ["image/jpeg", "image/png", "image/jpg"])
+    storage: BaseStorage = default_storage()
     path = await upload_file("avatar/", file)
-    return _R(data={"detail": default_storage().download(path, request)})
+    avatar = user.avatar
+    await service.update_user(user.phone, {"avatar": path})
+    if avatar is not None:
+        storage.delete(avatar)
+    return _R(data=_schema.UpdateAvatarResponse(avatar=path))
 
 
-@router.get("/me")
+@router.get("/me", summary="Get user information")
 async def me(user: UserModel = Depends(_services.get_user)) -> _R[UserSchema]:
     return _R(data=UserSchema.model_validate(user))

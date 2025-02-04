@@ -1,9 +1,11 @@
-from abc import ABC
-from abc import abstractmethod
-from typing import Optional, IO, Any, Union, TypeAlias, Literal
-from fastx.conf import settings
+from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import IO, Any, Literal, Optional, TypeAlias, Union
+
 from fastapi import Request
+from sqlalchemy import Column
+
+from fastx.conf import settings
 
 OpenTextModeUpdating: TypeAlias = Literal[
     "r+",
@@ -103,6 +105,7 @@ OpenTextModeReading: TypeAlias = Literal[
     "Ubr",
 ]
 OpenTextMode: TypeAlias = OpenTextModeUpdating | OpenTextModeWriting | OpenTextModeReading
+_PATH: TypeAlias = Union[str, Path, Column[str]]
 
 
 class BaseStorage(ABC):
@@ -113,29 +116,36 @@ class BaseStorage(ABC):
         super().__init__()
 
     @abstractmethod
-    def download(self, path: Union[str, Path], request: Optional[Request] = None) -> str:
+    def download_url(self, path: _PATH, request: Optional[Request] = None) -> str:
+        """
+        Generate file download url
+        """
         pass
 
     @abstractmethod
-    def path(self, path: Union[str, Path]) -> Union[str, Path]:
+    def delete(self, path: _PATH, raise_exception: bool = False) -> None:
         pass
 
     @abstractmethod
-    def open(self, path: Union[str, Path], mode: OpenTextMode = "r") -> Optional[Union[IO[Any]]]:
+    def path(self, path: _PATH) -> Union[str, Path]:
+        pass
+
+    @abstractmethod
+    def open(self, path: _PATH, mode: OpenTextMode = "r") -> Optional[Union[IO[Any]]]:
         """
         Fayilni ochish
         """
         pass
 
     @abstractmethod
-    def write(self, content: Any, path: Union[str, Path], mode: OpenTextModeWriting = "w") -> Union[str, Path]:
+    def write(self, content: Any, path: _PATH, mode: OpenTextModeWriting = "w") -> Union[str, Path]:
         """
         Yozish
         """
         pass
 
     @abstractmethod
-    def read(self, path: Union[str, Path], mode: OpenTextModeReading = "r") -> Union[str]:
+    def read(self, path: _PATH, mode: OpenTextModeReading = "r") -> Union[str]:
         """
         O'qish
         """

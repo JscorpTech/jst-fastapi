@@ -1,12 +1,11 @@
-from typing import List, TypeVar, Generic, Optional
+from typing import Generic, List, Optional, TypeVar
 
 from fastapi import Request
-from sqlalchemy.orm import Query
-from fastx.db.base import BaseModel
+from sqlalchemy.orm import Query, Session
 
+from fastx.db.base import BaseModel
 from fastx.filters import DefaultFilter
 from fastx.pagination import DefaultPagination
-from sqlalchemy.orm import Session
 
 T = TypeVar("T", bound=BaseModel)
 
