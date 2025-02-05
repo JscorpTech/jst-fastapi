@@ -10,10 +10,13 @@ from app.db.database import _DB
 from app.db.models import OtpModel
 from app.services.sms import EskizService
 from fastx.conf import settings
+from fastx.exceptions import APIException
+
+_OTP = Optional[Union[str, Column[int]]]
 
 
 class OtpService:
-    otp: Optional[Union[str, Column[int]]] = None
+    otp: _OTP = None
     db: Session
     phone: str | None = None
 
@@ -33,7 +36,7 @@ class OtpService:
         self.otp = self._generate_otp()
         return settings.OTP_MESSAGE % {"otp": self.otp}
 
-    def send_otp(self, phone: str):
+    def send_otp(self, phone: str) -> _OTP:
         """Send OTP"""
         try:
             self.phone = phone
@@ -45,15 +48,16 @@ class OtpService:
                 print(message)
             else:
                 EskizService().send_sms(phone, message)  # Make sure this method is sync
+            return self.otp
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"Failed to send OTP: {e}")
 
-    def verify_otp(self, phone: str, otp: str) -> bool:
+    def verify_otp(self, phone: str, otp: Union[str, int]) -> bool:
         """Verify OTP"""
         otp_entry = self.db.query(OtpModel).filter(OtpModel.phone == phone, OtpModel.otp == otp).first()
 
         if not otp_entry:
-            raise HTTPException(status_code=400, detail="Invalid OTP")
+            raise APIException(APIException.VALIDATION_ERROR, data={"code": APIException.INVALID_CODE})
 
         self.db.delete(otp_entry)
         self.db.commit()

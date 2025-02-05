@@ -16,7 +16,7 @@ from ..services import news as _services
 router = APIRouter()
 
 
-@router.get("/post")
+@router.get("/post", tags=['news'])
 async def post(
     request: Request,
     manager: DBManager[PostModel] = Depends(PostModel.manager),
@@ -30,16 +30,16 @@ async def post(
     return _R(data=manager.pagination(queryset, request, page, page_size).response())
 
 
-@router.post("/post")
+@router.post("/post", tags=['news'])
 async def create(db: _DB, post: _schema.CreatePostSchema) -> _R[_schema.ListPostSchema]:
     return _R(data=await _services.create_post(db, post))
 
 
-@router.get("/post/{post_id}")
+@router.get("/post/{post_id}", tags=['news'])
 async def get_post(db: _DB, post_id: int) -> _R[_schema.ListPostSchema]:
     return _R(data=await _services.get_post(db, post_id))
 
 
-@router.get("/tags")
+@router.get("/tags", tags=['news'])
 async def tags(db: _DB, request: Request, page: _PAGE = None) -> _R[_P[List[_schema.ListTagsSchema]]]:
     return _R(data=DefaultPagination(request, page).queryset(await _services.get_tags(db)).response())

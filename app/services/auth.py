@@ -10,7 +10,7 @@ from app.api.auth.schemas.auth import RegisterSchema
 from app.db.database import _DB
 from app.db.models import UserModel
 from fastx.exceptions import APIException
-from fastx.services import RedisService
+from fastx.services import redis
 
 
 class AuthService:
@@ -36,17 +36,17 @@ class AuthService:
         return user_data
 
     async def save_user_redis(self, user: RegisterSchema):
-        return await RedisService.set_key(self._redis_key(user.phone), user.model_dump_json(), ex=60 * 60)
+        return redis.set_key(self._redis_key(user.phone), user.model_dump_json(), ex=60 * 60)
 
     async def create_user_redis(self, phone: Union[str, int]) -> UserModel:
-        user = await RedisService.get_key(self._redis_key(phone))
+        user = redis.get_key(self._redis_key(phone))
         if not user:
-            raise Exception("User not found")
+            raise APIException(APIException.VALIDATION_ERROR, data={"phone": APIException.TEMPORARY_USER_NOT_FOUND})
         user = json.loads(user)
         return await self.create_user(**user)
 
     async def create_user(self, phone: str, password: str, *args, **kwargs) -> UserModel:
-        user = UserModel(phone=phone, password=await self.make_hash(password), **kwargs)
+        user = UserModel(phone=phone, password=await self.make_password(password), **kwargs)
         self.db.add(user)
         self.db.commit()
         return user
@@ -57,11 +57,16 @@ class AuthService:
             raise HTTPException(status_code=400, detail="Invalid credentials")
         return user
 
-    async def make_hash(self, password: str) -> str:
+    async def make_password(self, password: str) -> str:
         return bcrypt.hash(password)
 
-    async def check_password(self, password: str, hashed_password: str) -> bool:
-        return bcrypt.verify(password, hashed_password)
+    async def check_password(self, password: str, hashed_password: str, raise_exception: bool = False) -> bool:
+        is_verify = bcrypt.verify(password, hashed_password)
+        if not is_verify:
+            if raise_exception:
+                raise APIException(APIException.VALIDATION_ERROR, data={"password": "Invalid password"})
+            return False
+        return True
 
     def _redis_key(self, phone: Union[str, int]) -> str:
         return "user_%s" % phone

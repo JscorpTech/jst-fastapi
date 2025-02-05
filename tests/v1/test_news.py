@@ -8,7 +8,7 @@ class TestNews:
 
     def setup_method(self):
         self.db = TestingSessionLocal()
-        self.post = PostModel(title="Test Post", content="This is a test post.")
+        self.post = PostModel(title={"uz": "Test Post"}, content={"uz": "This is a test post."})
         self.db.add(self.post)
         self.db.commit()
 
@@ -24,8 +24,8 @@ class TestNews:
         response = client.post(
             "/v1/news/post",
             json={
-                "title": "Test Post",
-                "content": "This is a test post.",
+                "title": {"uz": "Test Post"},
+                "content": {"uz": "This is a test post."},
                 "tags": [{"name": "Test Tag"}],
             },
         )
