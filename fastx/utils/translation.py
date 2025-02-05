@@ -15,6 +15,8 @@ def set_language(lang: str) -> Any:
 
 
 def translate(val: dict) -> str | None:
+    if not isinstance(val, (dict,)):
+        raise Exception("🤐 translate value not dict")
     data = val.get(get_language())
     if data is None:
         return val.get(settings.LANGUAGE)

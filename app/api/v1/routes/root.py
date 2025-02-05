@@ -11,12 +11,12 @@ from fastx.storage.file import FileStorage
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("/", tags=['root'])
 async def root(request: Request) -> _R:
     return _R()
 
 
-@router.get("/storage/{file_path:path}")
+@router.get("/storage/{file_path:path}", tags=['root'])
 def storage(file_path: Annotated[str, Path()]):
     file = pathlib.Path(FileStorage().path(file_path))
     if not file.exists():

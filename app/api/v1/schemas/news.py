@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from fastx.schema.fields import AutoTranslatedField, TranslatedField
+from fastx.schema.fields import _AUTOTRANSLATE, TranslatedField
 
 
 class BaseTagsSchema(BaseModel):
@@ -33,8 +33,8 @@ class CreatePostSchema(BasePostSchema):
 
 class ListPostSchema(BasePostSchema):
     id: int
-    title: Optional[AutoTranslatedField]
-    content: Optional[AutoTranslatedField]
+    title: Optional[_AUTOTRANSLATE]
+    content: Optional[_AUTOTRANSLATE]
     tags: list[ListTagsSchema]
 
     class Config:

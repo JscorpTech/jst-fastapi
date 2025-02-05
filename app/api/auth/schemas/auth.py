@@ -1,18 +1,18 @@
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic import BaseModel, Field
 
-from fastx.schema.fields import FileField
+from fastx.schema.fields import _FILE, _PHONE, _PASSWORD
 
 
 class LoginSchema(BaseModel):
-    phone: str = Field(max_length=100)
-    password: str = Field(min_length=8)
+    phone: _PHONE
+    password: _PASSWORD
 
 
 class RegisterSchema(BaseModel):
-    phone: str = Field(max_length=12, min_length=12)
-    password: str = Field(min_length=8)
+    phone: _PHONE
+    password: _PASSWORD
     first_name: str = Field(max_length=100)
     last_name: str = Field(max_length=100)
     email: Optional[str] = None
@@ -27,8 +27,31 @@ class UpdateSchema(BaseModel):
         from_attributes = True
 
 
+class ChangePasswordSchema(BaseModel):
+    old_password: str
+    new_password: str
+
+
+class ResetPasswordSchema(BaseModel):
+    phone: _PHONE
+    code: Union[str, int]
+
+
+class ResetPasswordTokenSchema(BaseModel):
+    token: str
+
+
+class ResetPasswordConfirmSchema(BaseModel):
+    token: str
+    password: _PASSWORD
+
+
+class ResendCodeSchema(BaseModel):
+    phone: _PHONE
+
+
 class UpdateAvatarResponse(BaseModel):
-    avatar: FileField
+    avatar: _FILE
 
 
 class TokenSchema(BaseModel):
@@ -37,5 +60,5 @@ class TokenSchema(BaseModel):
 
 
 class ConfirmSchema(BaseModel):
-    phone: str = Field(max_length=100)
+    phone: _PHONE
     code: str
