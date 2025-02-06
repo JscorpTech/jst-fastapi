@@ -43,6 +43,7 @@ class AuthService:
         if not user:
             raise APIException(APIException.VALIDATION_ERROR, data={"phone": APIException.TEMPORARY_USER_NOT_FOUND})
         user = json.loads(user)
+        redis.delete_key(self._redis_key(phone))
         return await self.create_user(**user)
 
     async def create_user(self, phone: str, password: str, *args, **kwargs) -> UserModel:

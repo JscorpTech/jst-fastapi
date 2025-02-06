@@ -61,8 +61,10 @@ class TestAuth(BaseTest):
 
     async def test_reset_password_confirm(self, client: TestClient):
         token = "token"
-        redis.set_key("reset-password:{}".format(token), self._phone)
+        key = "reset-password:{}".format(token)
+        redis.set_key(key, self._phone)
         response = client.post("/auth/reset-password/confirm", json={"token": token, "password": "Samandar001@"})
+        redis.delete_key(key)
         assert response.status_code == 200
         assert response.json()["status"] is True
 
