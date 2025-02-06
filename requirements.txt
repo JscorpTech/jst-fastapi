@@ -14,6 +14,7 @@ alembic # migrations control
 pyinstrument # profiling
 python-multipart # fastapi file upload
 pytest # pytest
+pytest-asyncio # pytest
 httpx # pytest
 boto3 # s3 storage
 python-magic # validate file mime type

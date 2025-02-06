@@ -16,4 +16,4 @@ LANGUAGES: List[str] = ["uz", "en", "ru"]
 
 STORAGE_DIR: Path = BASE_DIR / "storage"
 STORAGE_URL: str = env.str("STORAGE_URL", "storage")
-DEFAULT_STORAGE: str = "fastx.storage.s3.S3Storage"
+DEFAULT_STORAGE: str = "fastx.storage.file.FileStorage"

@@ -1,0 +1,35 @@
+name: Python CI
+
+on:
+  push:
+    branches:
+      - main  # or the branch of your choice
+  pull_request:
+    branches:
+      - main  # runs on PR to main branch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # Or use macos-latest or windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'  # Set Python version here
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests with pytest
+        env:
+          DATABASE_URL: postgresql://postgres:KbxaeFMVRncgoObojOeWZHYxZXyiySbI@viaduct.proxy.rlwy.net:54787/railway
+          REDIS_URL: redis://default:VcMktitVOgyIcRuLqsYiTGHzoUSBZiZH@junction.proxy.rlwy.net:40532
+        run: |
+          cp .env.example .env
+          pytest --maxfail=1 --disable-warnings -q -v # Adjust pytest options as needed
