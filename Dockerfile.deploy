@@ -3,7 +3,7 @@ FROM python:3.13-alpine
 WORKDIR /code
 RUN apk add --no-cache file
 COPY requirements.txt .
-RUN --mount=type=cache,id=s/eb837658-918a-4fb7-be4e-67ccd55d8358-/root/.cache/pip,target=/root/.cache/pip pip install -r requirements.txt
+RUN --mount=type=cache,id=s/1f093a84-7b94-4827-b11d-cfdb5629e922-/root/.cache/pip,target=/root/.cache/pip pip install -r requirements.txt
 
 COPY . .
 
