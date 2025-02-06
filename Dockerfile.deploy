@@ -1,0 +1,11 @@
+FROM python:3.13-alpine
+
+WORKDIR /code
+RUN apk add --no-cache file
+COPY requirements.txt .
+RUN --mount=type=cache,id=s/eb837658-918a-4fb7-be4e-67ccd55d8358-/root/.cache/pip,target=/root/.cache/pip pip install -r requirements.txt
+
+COPY . .
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
