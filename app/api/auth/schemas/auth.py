@@ -59,6 +59,13 @@ class TokenSchema(BaseModel):
     refresh_token: str
 
 
+class RefreshTokenSchema(BaseModel):
+    token: str
+
+class RefreshTokenResponseSchema(BaseModel):
+    access_token: str
+
+
 class ConfirmSchema(BaseModel):
     phone: _PHONE
     code: str

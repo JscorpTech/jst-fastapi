@@ -13,6 +13,8 @@ from app.services.auth import AuthService
 from fastx.services import redis
 from fastx.exceptions import APIException
 from uuid import uuid4
+from app.api.auth.services.auth import jwt_encode, jwt_decode
+from app.services.user import oauth2_scheme
 
 from ..schemas import auth as _schema
 from ..services.auth import create_token
@@ -64,6 +66,14 @@ async def login(
     return _R(status=True, data=_schema.TokenSchema(**await create_token(user)))
 
 
+@router.post("/refresh-token")
+async def refresh_token(data: Annotated[_schema.RefreshTokenSchema, Body()]) -> _R[_schema.RefreshTokenResponseSchema]:
+    user = await jwt_decode(data.token)
+    if user["token_type"] != "refresh":
+        raise APIException("Invalid token")
+    return _R(data=_schema.RefreshTokenResponseSchema(access_token=await jwt_encode(user["sub"])))
+
+
 @router.post("/change-password")
 async def change_password(
     password: _schema.ChangePasswordSchema,
@@ -77,9 +87,13 @@ async def change_password(
 
 @router.post("/reset-password", tags=["reset-password"])
 async def reset_password(
-    data: _schema.ResetPasswordSchema, service: Annotated[_services.OtpService, Depends()]
+    data: _schema.ResetPasswordSchema,
+    otp_service: Annotated[_services.OtpService, Depends()],
+    service: Annotated[AuthService, Depends()],
 ) -> _R[_schema.ResetPasswordTokenSchema]:
-    service.verify_otp(data.phone, data.code)
+    if not await service.is_already_user(data.phone):
+        raise APIException(data={"phone": "User not found"}, detail=APIException.VALIDATION_ERROR)
+    otp_service.verify_otp(data.phone, data.code)
     token = str(uuid4())
     redis.set_key("reset-password:{}".format(token), data.phone, 60 * 60)
     return _R(data=_schema.ResetPasswordTokenSchema(token=token))
@@ -91,7 +105,7 @@ async def reset_password_confirm(
 ) -> _R:
     key = "reset-password:{}".format(data.token)
     user = redis.get_key(key)
-    if user is None:
+    if user is None or not await service.is_already_user(user):
         raise APIException(APIException.VALIDATION_ERROR, data={"token": APIException.INVALID_TOKEN})
     await service.update_user(user, {"password": await service.make_password(data.password)})
     redis.delete_key(key)
