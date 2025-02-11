@@ -51,11 +51,11 @@ class TestAuth(BaseTest):
         assert response.json()["status"] is True
 
     async def test_reset_password(self, client: TestClient):
-        otp = OtpModel(phone=self.phone, otp=self.code)
+        otp = OtpModel(phone=self._phone, otp=self.code)
         self.db.add(otp)
         self.db.commit()
         self.db.refresh(otp)
-        response = client.post("/auth/reset-password", json={"phone": self.phone, "code": self.code})
+        response = client.post("/auth/reset-password", json={"phone": self._phone, "code": self.code})
         assert response.status_code == 200
         assert response.json()["status"] is True
 
