@@ -14,7 +14,6 @@ from fastx.services import redis
 from fastx.exceptions import APIException
 from uuid import uuid4
 from app.api.auth.services.auth import jwt_encode, jwt_decode
-from app.services.user import oauth2_scheme
 
 from ..schemas import auth as _schema
 from ..services.auth import create_token
