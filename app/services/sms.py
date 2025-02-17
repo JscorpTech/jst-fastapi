@@ -21,6 +21,7 @@ class EskizService(SmsService):
     CONTACT = "contact"
 
     def __init__(self, api_url=None, email=None, password=None, callback_url=None):
+        super().__init__()
         self.api_url = api_url or settings.SMS_API_URL
         self.email = email or settings.SMS_LOGIN
         self.password = password or settings.SMS_PASSWORD
