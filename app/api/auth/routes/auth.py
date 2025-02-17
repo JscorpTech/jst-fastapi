@@ -9,7 +9,7 @@ from fastx.schema.response import _R
 from fastx.storage.base import BaseStorage
 from fastx.utils import default_storage, upload_file
 from fastx.utils.validation import validate_mine
-from app.services.auth import AuthService
+from app.services.auth import AuthService, check_password, make_password
 from fastx.services import redis
 from fastx.exceptions import APIException
 from uuid import uuid4
@@ -79,8 +79,8 @@ async def change_password(
     user: Annotated[UserModel, Depends(_services.get_user)],
     service: Annotated[AuthService, Depends()],
 ) -> _R[_schema.ChangePasswordSchema]:
-    await service.check_password(password.old_password, str(user.password), raise_exception=True)
-    await service.update_user(user.phone, {"password": await service.make_password(password.new_password)})
+    await check_password(password.old_password, str(user.password), raise_exception=True)
+    await service.update_user(user.phone, {"password": await make_password(password.new_password)})
     return _R(data=password)
 
 
@@ -106,7 +106,7 @@ async def reset_password_confirm(
     user = redis.get_key(key)
     if user is None or not await service.is_already_user(user):
         raise APIException(APIException.VALIDATION_ERROR, data={"token": APIException.INVALID_TOKEN})
-    await service.update_user(user, {"password": await service.make_password(data.password)})
+    await service.update_user(user, {"password": await make_password(data.password)})
     redis.delete_key(key)
     return _R()
 

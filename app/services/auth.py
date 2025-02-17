@@ -13,6 +13,23 @@ from fastx.exceptions import APIException
 from fastx.services import redis
 
 
+async def make_password(password: str) -> str:
+    return bcrypt.hash(password)
+
+
+async def check_password(password: str, hashed_password: str, raise_exception: bool = False) -> bool:
+    is_verify = bcrypt.verify(password, hashed_password)
+    if not is_verify:
+        if raise_exception:
+            raise APIException(APIException.VALIDATION_ERROR, data={"password": "Invalid password"})
+        return False
+    return True
+
+
+def redis_key(phone: Union[str, int]) -> str:
+    return "user_%s" % phone
+
+
 class AuthService:
     db: Session
 
@@ -35,39 +52,25 @@ class AuthService:
         self.db.refresh(user_instance)
         return user_data
 
-    async def save_user_redis(self, user: RegisterSchema):
-        return redis.set_key(self._redis_key(user.phone), user.model_dump_json(), ex=60 * 60)
+    async def save_user_redis(self, user: RegisterSchema) -> str:
+        return redis.set_key(redis_key(user.phone), user.model_dump_json(), ex=60 * 60)
 
     async def create_user_redis(self, phone: Union[str, int]) -> UserModel:
-        user = redis.get_key(self._redis_key(phone))
+        user = redis.get_key(redis_key(phone))
         if not user:
             raise APIException(APIException.VALIDATION_ERROR, data={"phone": APIException.TEMPORARY_USER_NOT_FOUND})
         user = json.loads(user)
-        redis.delete_key(self._redis_key(phone))
+        redis.delete_key(redis_key(phone))
         return await self.create_user(**user)
 
     async def create_user(self, phone: str, password: str, *args, **kwargs) -> UserModel:
-        user = UserModel(phone=phone, password=await self.make_password(password), **kwargs)
+        user = UserModel(phone=phone, password=await make_password(password), **kwargs)
         self.db.add(user)
         self.db.commit()
         return user
 
     async def validate_user(self, phone: str, password: str) -> UserModel:
         user: Optional[UserModel] = self.db.query(UserModel).filter(UserModel.phone == phone).first()
-        if not user or not await self.check_password(password, str(user.password)):
+        if not user or not await check_password(password, str(user.password)):
             raise HTTPException(status_code=400, detail="Invalid credentials")
         return user
-
-    async def make_password(self, password: str) -> str:
-        return bcrypt.hash(password)
-
-    async def check_password(self, password: str, hashed_password: str, raise_exception: bool = False) -> bool:
-        is_verify = bcrypt.verify(password, hashed_password)
-        if not is_verify:
-            if raise_exception:
-                raise APIException(APIException.VALIDATION_ERROR, data={"password": "Invalid password"})
-            return False
-        return True
-
-    def _redis_key(self, phone: Union[str, int]) -> str:
-        return "user_%s" % phone
