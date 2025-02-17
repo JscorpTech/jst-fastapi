@@ -7,7 +7,6 @@ from fastapi.responses import FileResponse, PlainTextResponse
 from fastx.schema.response import _R
 from fastx.storage.file import FileStorage
 
-
 router = APIRouter()
 
 

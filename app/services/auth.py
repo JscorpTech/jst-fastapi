@@ -30,6 +30,7 @@ def redis_key(phone: Union[str, int]) -> str:
     return "user_%s" % phone
 
 
+# noinspection PyTypeChecker
 class AuthService:
     db: Session
 
@@ -52,6 +53,7 @@ class AuthService:
         self.db.refresh(user_instance)
         return user_data
 
+    # noinspection PyMethodMayBeStatic
     async def save_user_redis(self, user: RegisterSchema) -> str:
         return redis.set_key(redis_key(user.phone), user.model_dump_json(), ex=60 * 60)
 

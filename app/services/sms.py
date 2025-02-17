@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import logging # noqa
 
 import requests
 
@@ -114,7 +115,7 @@ class EskizService(SmsService):
             headers=context["headers"],
         )
 
-    async def send_sms(self, phone_number, message):
+    def send_sms(self, phone_number, message):
         token = self.auth()["data"]["token"]
         self.headers["Authorization"] = "Bearer " + token
 

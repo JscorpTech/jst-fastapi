@@ -1,5 +1,4 @@
 from typing import Annotated
-
 from fastapi import APIRouter, Body, Depends, File, UploadFile
 
 from app import services as _services

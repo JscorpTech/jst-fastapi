@@ -8,9 +8,9 @@ from sqlalchemy.orm import Session
 
 from app.db.database import _DB
 from app.db.models import OtpModel
-from app.services.sms import EskizService
 from fastx.conf import settings
 from fastx.exceptions import APIException
+from app import tasks
 
 _OTP = Optional[Union[str, Column[int]]]
 
@@ -47,7 +47,7 @@ class OtpService:
             if settings.OTP_CONSOLE:
                 print(message)
             else:
-                EskizService().send_sms(phone, message)  # Make sure this method is sync
+                tasks.send_message.delay(phone=phone, message=message)
             return self.otp
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"Failed to send OTP: {e}")

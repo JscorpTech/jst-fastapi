@@ -1,20 +1,23 @@
-fastapi
-redis
+fastapi~=0.115.8
+redis~=5.2.0
 uvicorn # asgi runner
 tomli_w
-passlib # password hashing
-environs # .env reader
+passlib~=1.7.4
+environs~=14.1.1
 bcrypt # password hashing
-requests
-pyjwt # jwt authentication
+requests~=2.32.3
+pyjwt~=2.10.0
 asgiref
 psycopg2-binary # postgresql driver
-sqlalchemy # database
-alembic # migrations control
-pyinstrument # profiling
+sqlalchemy~=2.0.38
+alembic~=1.14.1
+pyinstrument~=5.0.1
 python-multipart # fastapi file upload
-pytest # pytest
+pytest~=8.3.4
 pytest-asyncio # pytest
 httpx # pytest
-boto3 # s3 storage
-python-magic # validate file mime type
+boto3~=1.36.17
+python-magic~=0.4.27
+pydantic~=2.10.3
+botocore~=1.36.17
+celery~=5.4.0

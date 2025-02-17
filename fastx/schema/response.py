@@ -1,4 +1,4 @@
-from typing import Dict, Generic, List, TypeVar
+from typing import Dict, Generic, List, TypeVar, Type
 
 from pydantic import BaseModel
 
@@ -11,4 +11,4 @@ class ResponseSchema(BaseModel, Generic[T]):
     message: str | None = "🫠 OK"
 
 
-_R = ResponseSchema
+_R: Type[ResponseSchema] = ResponseSchema
